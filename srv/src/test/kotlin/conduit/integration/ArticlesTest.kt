@@ -236,8 +236,8 @@ class ArticlesTest : StringSpec() {
             val response = send(request)
             response.status.shouldBe(Status.OK)
 
-            val result = IntegrationTest.app.db.connector()
-                .prepareStatement("SELECT * FROM Articles WHERE slug = '$articleSlug'", false)
+            val result = IntegrationTest.app.connection
+                .prepareStatement("SELECT * FROM Articles WHERE slug = '$articleSlug'")
                 .executeQuery()
             result.next()
 
@@ -248,8 +248,8 @@ class ArticlesTest : StringSpec() {
     }
 
     private fun articleExists(slug: String): Boolean {
-        val result = IntegrationTest.app.db.connector()
-            .prepareStatement("SELECT COUNT(1) FROM Articles WHERE slug = '$slug'", false)
+        val result = IntegrationTest.app.connection
+            .prepareStatement("SELECT COUNT(1) FROM Articles WHERE slug = '$slug'")
             .executeQuery()
         result.next()
 
