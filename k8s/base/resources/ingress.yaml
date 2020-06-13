@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
-  namespace: 4sh-formation-@ME
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     acme.cert-manager.io/http01-edit-in-place: "true"
@@ -11,10 +10,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - "4sh-formation-@ME.learning.quatre.app"
-      secretName: my-training-@ME-cert
+        - "4sh-formation-me.learning.quatre.app"
+      secretName: my-training-me-cert
   rules:
-    - host: 4sh-formation-@ME.learning.quatre.app
+    - host: 4sh-formation-me.learning.quatre.app
       http:
         paths:
           - path: /api/
