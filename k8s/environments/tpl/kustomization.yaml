@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: 4sh-formation-xhn
+namespace: 4sh-formation-@ME
 resources:
   - ../../base
 patches:
@@ -10,7 +10,6 @@ patches:
       name: ingress
 images:
   - name: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-ui-me
-    newName: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-ui-xhn
+    newName: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-ui-@ME
   - name: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-srv-me
-    newName: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-srv-xhn
-
+    newName: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-srv-@ME
