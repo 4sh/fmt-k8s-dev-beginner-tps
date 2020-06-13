@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-ui
-  namespace: 4sh-formation-@ME
   labels:
     app: app-ui
     kind: ui
@@ -18,7 +17,7 @@ spec:
     spec:
       containers:
         - name: app-ui
-          image: europe-docker.pkg.dev/quatreapp/k8straining/myapp-ui-@ME:1.0
+          image: europe-docker.pkg.dev/quatreapp/k8straining/myapp-ui-me
           resources:
             requests:
               cpu: "100m"
