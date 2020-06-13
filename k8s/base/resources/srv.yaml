@@ -15,12 +15,19 @@ spec:
       labels:
         app: app-srv
     spec:
+      volumes:
+        - name: config
+          configMap:
+            name: app-config
       containers:
         - name: app-srv
-          image: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-srv-me
+          image: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-srv-@ENV
           envFrom:
             - configMapRef:
-                name: app-config
+                name: env-config
+          volumeMounts:
+            - mountPath: /etc/conduit
+              name: config
           resources:
             requests:
               cpu: "100m"

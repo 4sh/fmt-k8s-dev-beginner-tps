@@ -10,10 +10,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - "4sh-formation-me.learning.quatre.app"
-      secretName: my-training-me-cert
+        - "4sh-formation-@ENV.learning.quatre.app"
+      secretName: my-training-@ENV-cert
   rules:
-    - host: 4sh-formation-me.learning.quatre.app
+    - host: 4sh-formation-@ENV.learning.quatre.app
       http:
         paths:
           - path: /api/
