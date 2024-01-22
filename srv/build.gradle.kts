@@ -23,7 +23,10 @@ application {
 repositories {
     mavenCentral()
     jcenter()
-    maven { url = URI("http://dl.bintray.com/kotlin/exposed") }
+    maven {
+        url = URI("http://dl.bintray.com/kotlin/exposed")
+        isAllowInsecureProtocol = true
+    }
 }
 
 dependencies {
