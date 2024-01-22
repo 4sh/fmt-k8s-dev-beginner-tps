@@ -1,32 +1,89 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
+import { inject, NgModule } from "@angular/core";
+import { Routes, RouterModule, PreloadAllModules } from "@angular/router";
+import { UserService } from "./core/services/user.service";
+import { map } from "rxjs/operators";
+import { ProfileComponent } from "./features/profile/routes/profile/profile.component";
 
 const routes: Routes = [
   {
-    path: 'settings',
-    loadChildren: './settings/settings.module#SettingsModule'
+    path: "",
+    loadComponent: () =>
+      import("./features/article/routes/home/home.component"),
   },
   {
-    path: 'profile',
-    loadChildren: './profile/profile.module#ProfileModule'
+    path: "login",
+    loadComponent: () => import("./core/auth/auth.component"),
+    canActivate: [
+      () => inject(UserService).isAuthenticated.pipe(map((isAuth) => !isAuth)),
+    ],
   },
   {
-    path: 'editor',
-    loadChildren: './editor/editor.module#EditorModule'
+    path: "register",
+    loadComponent: () => import("./core/auth/auth.component"),
+    canActivate: [
+      () => inject(UserService).isAuthenticated.pipe(map((isAuth) => !isAuth)),
+    ],
   },
   {
-    path: 'article',
-    loadChildren: './article/article.module#ArticleModule'
-  }
+    path: "settings",
+    loadComponent: () => import("./features/settings/settings.component"),
+    canActivate: [() => inject(UserService).isAuthenticated],
+  },
+  {
+    path: "profile",
+    children: [
+      {
+        path: ":username",
+        component: ProfileComponent,
+        children: [
+          {
+            path: "",
+            loadComponent: () =>
+              import(
+                "./features/profile/components/profile-articles.component"
+              ),
+          },
+          {
+            path: "favorites",
+            loadComponent: () =>
+              import(
+                "./features/profile/components/profile-favorites.component"
+              ),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "editor",
+    children: [
+      {
+        path: "",
+        loadComponent: () =>
+          import("./features/article/routes/editor/editor.component"),
+        canActivate: [() => inject(UserService).isAuthenticated],
+      },
+      {
+        path: ":slug",
+        loadComponent: () =>
+          import("./features/article/routes/editor/editor.component"),
+        canActivate: [() => inject(UserService).isAuthenticated],
+      },
+    ],
+  },
+  {
+    path: "article/:slug",
+    loadComponent: () =>
+      import("./features/article/routes/article/article.component"),
+  },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {
-    // preload all modules; optionally we could
-    // implement a custom preloading strategy for just some
-    // of the modules (PRs welcome 😉)
-    preloadingStrategy: PreloadAllModules
-  })],
-  exports: [RouterModule]
+  imports: [
+    RouterModule.forRoot(routes, {
+      preloadingStrategy: PreloadAllModules,
+    }),
+  ],
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}
