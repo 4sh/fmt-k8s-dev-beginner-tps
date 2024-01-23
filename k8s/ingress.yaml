@@ -28,7 +28,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: kube-test-container
+                name: app-ui
                 port:
                   number: 80
 ---
