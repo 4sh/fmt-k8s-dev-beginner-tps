@@ -18,8 +18,7 @@ spec:
     spec:
       containers:
         - name: app-ui
-          image: europe-docker.pkg.dev/quatreapp/k8straining/myapp-ui-@ME
-          imagePullPolicy: Always
+          image: europe-docker.pkg.dev/quatreapp/k8straining/myapp-ui-@ME:1.0
           resources:
             requests:
               cpu: "100m"
