@@ -18,8 +18,7 @@ spec:
     spec:
       containers:
         - name: app-ui
-          image: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-ui-@ME
-          imagePullPolicy: Always
+          image: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-ui-@ME:1.0
           resources:
             requests:
               cpu: "100m"
