@@ -10,3 +10,8 @@ configMapGenerator:
   - name: app-config
     files:
       - app.conf
+images:
+  - name: europe-docker.pkg.dev/quatreapp/k8straining/myapp-ui-me
+    newName: europe-docker.pkg.dev/quatreapp/k8straining/myapp-ui-@ME:1.0
+  - name: europe-docker.pkg.dev/quatreapp/k8straining/myapp-srv-me
+    newName: europe-docker.pkg.dev/quatreapp/k8straining/myapp-srv-@ME:2.0.0
