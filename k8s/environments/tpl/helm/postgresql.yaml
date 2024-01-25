@@ -1,0 +1,13 @@
+auth:
+  ## @param auth.enablePostgresUser Assign a password to the "postgres" admin user. Otherwise, remote access will be blocked for this user
+  ##
+  enablePostgresUser: true
+  ## @param auth.username Name for a custom user to create
+  ##
+  username: "app"
+  ## @param auth.password Password for the custom user to create. Ignored if `auth.existingSecret` is provided
+  ##
+  password: "app123"
+  ## @param auth.database Name for a custom database to create
+  ##
+  database: "conduit"
