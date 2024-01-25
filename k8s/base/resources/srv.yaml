@@ -21,7 +21,7 @@ spec:
             name: app-config
       containers:
         - name: app-srv
-          image: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-srv-@ENV
+          image: europe-west9-docker.pkg.dev/qsh-learning/qsh-learning-docker-registry/myapp-srv-me
           envFrom:
             - configMapRef:
                 name: env-config
