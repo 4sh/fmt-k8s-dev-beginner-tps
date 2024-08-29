@@ -9,7 +9,8 @@ import org.http4k.format.ConfigurableJackson
 import org.http4k.format.asConfigurable
 import org.http4k.format.withStandardMappings
 
-val mapper: ObjectMapper = KotlinModule()
+val mapper: ObjectMapper = KotlinModule.Builder()
+    .build()
     .asConfigurable()
     .withStandardMappings()
     .done()

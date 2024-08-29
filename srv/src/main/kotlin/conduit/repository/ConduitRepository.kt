@@ -1,8 +1,9 @@
 package conduit.repository
 
 import conduit.model.*
-import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.joda.time.DateTime
 
 interface ConduitRepository {
@@ -17,21 +18,21 @@ interface ConduitRepository {
     fun insertFollowing(sourceUserId: Int, targetUserId: Int)
     fun deleteFollowing(sourceUserId: Int, targetUserId: Int)
 
-    fun getArticleFavoritesCount(articleId: Int): Int
+    fun getArticleFavoritesCount(articleId: Int): Long
     fun isArticleFavorited(articleId: Int, userId: Int): Boolean
     fun insertFavorite(articleId: Int, userId: Int)
     fun deleteFavorite(articleId: Int, userId: Int)
     fun updateArticle(articleId: Int, body: ArticleBody?, description: ArticleDescription?, title: ArticleTitle?)
 
-    fun getArticlesOfAuthorsCount(authorUserIds: List<Int>): Int
-    fun getArticlesOfAuthors(authorUserIds: List<Int>, offset: Int, limit: Int): List<Article>
+    fun getArticlesOfAuthorsCount(authorUserIds: List<Int>): Long
+    fun getArticlesOfAuthors(authorUserIds: List<Int>, offset: Long, limit: Int): List<Article>
     fun getArticle(slug: ArticleSlug): Article?
     fun getArticleIdsByTag(tag: ArticleTag): List<Int>
     fun getArticleIdsFavoritedBy(userId: Int): List<Int>
-    fun getArticlesCount(authorUserId: Int?, taggedWithTagIds: List<Int>?, includingIds: List<Int>?): Int
+    fun getArticlesCount(authorUserId: Int?, taggedWithTagIds: List<Int>?, includingIds: List<Int>?): Long
     fun getArticles(
         limit: Int,
-        offset: Int,
+        offset: Long,
         authorUserId: Int?,
         taggedWithTagIds: List<Int>?,
         includingIds: List<Int>?
@@ -48,11 +49,11 @@ interface ConduitRepository {
 }
 
 class ConduitRepositoryImpl : ConduitRepository {
-    override fun getUser(email: Email) = Users.select { Users.email eq email.value }.firstOrNull()?.toUser()
+    override fun getUser(email: Email) = Users.selectAll().where { Users.email eq email.value }.firstOrNull()?.toUser()
     override fun getUser(username: Username) =
-        Users.select { Users.username eq username.value }.firstOrNull()?.toUser()
+        Users.selectAll().where { Users.username eq username.value }.firstOrNull()?.toUser()
 
-    override fun getUser(userId: Int) = Users.select { Users.id eq userId }.singleOrNull()?.toUser()
+    override fun getUser(userId: Int) = Users.selectAll().where { Users.id eq userId }.singleOrNull()?.toUser()
 
     override fun insertUser(newUser: NewUser) {
         Users.insert {
@@ -74,10 +75,10 @@ class ConduitRepositoryImpl : ConduitRepository {
     }
 
     override fun getFollowing(sourceUserId: Int, targetUserId: Int): Boolean =
-        Following.select { (Following.sourceId eq sourceUserId) and (Following.targetId eq targetUserId) }.any()
+        Following.selectAll().where { (Following.sourceId eq sourceUserId) and (Following.targetId eq targetUserId) }.any()
 
     override fun getFollowedUserIds(sourceUserId: Int): List<Int> =
-        Following.select { Following.sourceId eq sourceUserId }.map { it[Following.targetId].value }.toList()
+        Following.selectAll().where { Following.sourceId eq sourceUserId }.map { it[Following.targetId].value }.toList()
 
     override fun insertFollowing(sourceUserId: Int, targetUserId: Int) {
         Following.insert {
@@ -88,33 +89,36 @@ class ConduitRepositoryImpl : ConduitRepository {
 
     override fun deleteFollowing(sourceUserId: Int, targetUserId: Int) {
         Following.deleteWhere {
-            (Following.sourceId eq sourceUserId) and (Following.targetId eq targetUserId)
+            (sourceId eq sourceUserId) and (targetId eq targetUserId)
         }
     }
 
-    override fun getArticlesOfAuthorsCount(authorUserIds: List<Int>): Int =
-        Articles.select { Articles.authorId inList authorUserIds }.count()
+    override fun getArticlesOfAuthorsCount(authorUserIds: List<Int>): Long =
+        Articles.selectAll().where { Articles.authorId inList authorUserIds }.count()
 
-    override fun getArticlesOfAuthors(authorUserIds: List<Int>, offset: Int, limit: Int): List<Article> =
-        Articles.select { Articles.authorId inList authorUserIds }
+    override fun getArticlesOfAuthors(authorUserIds: List<Int>, offset: Long, limit: Int): List<Article> =
+        Articles.selectAll().where { Articles.authorId inList authorUserIds }
             .orderBy(Articles.createdAt, SortOrder.DESC)
             .limit(limit, offset)
             .toList()
             .map { it.toArticle() }
 
     override fun getTagsOfArticle(articleId: Int): List<ArticleTag> =
-        Tags.select { Tags.articleId eq EntityID(articleId, Articles) }
+        Tags.selectAll().where { Tags.articleId eq EntityID(articleId, Articles) }
             .map { ArticleTag(it[Tags.tag]) }
             .toList()
 
-    override fun getArticleFavoritesCount(articleId: Int): Int =
-        Favorites.select { Favorites.articleId eq EntityID(articleId, Articles) }.count()
+    override fun getArticleFavoritesCount(articleId: Int): Long =
+        Favorites.selectAll().where { Favorites.articleId eq EntityID(articleId, Articles) }.count()
 
     override fun isArticleFavorited(articleId: Int, userId: Int) =
         Favorites
-            .select {
-                (Favorites.articleId eq EntityID(articleId, Articles)) and (Favorites.userId eq EntityID(userId, Users))
-            }.count() == 1
+            .selectAll().where {
+                (Favorites.articleId eq EntityID(articleId, Articles)) and (Favorites.userId eq EntityID(
+                    userId,
+                    Users
+                ))
+            }.count() == 1L
 
     override fun insertFavorite(articleId: Int, userId: Int) {
         Favorites.insert {
@@ -162,15 +166,15 @@ class ConduitRepositoryImpl : ConduitRepository {
     }
 
     override fun getArticle(slug: ArticleSlug): Article? =
-        Articles.select { Articles.slug eq slug.value }.singleOrNull()?.toArticle()
+        Articles.selectAll().where { Articles.slug eq slug.value }.singleOrNull()?.toArticle()
 
     override fun getArticleIdsByTag(tag: ArticleTag): List<Int> =
-        Tags.select { Tags.tag eq tag.value }.map { it[Tags.articleId].value }
+        Tags.selectAll().where { Tags.tag eq tag.value }.map { it[Tags.articleId].value }
 
     override fun getArticleIdsFavoritedBy(userId: Int): List<Int> =
-        Favorites.select { Favorites.userId eq userId }.map { it[Favorites.articleId].value }
+        Favorites.selectAll().where { Favorites.userId eq userId }.map { it[Favorites.articleId].value }
 
-    override fun getArticlesCount(authorUserId: Int?, taggedWithTagIds: List<Int>?, includingIds: List<Int>?): Int {
+    override fun getArticlesCount(authorUserId: Int?, taggedWithTagIds: List<Int>?, includingIds: List<Int>?): Long {
         val query = Articles.selectAll()
 
         authorUserId?.also { userId -> query.andWhere { Articles.authorId eq userId } }
@@ -182,7 +186,7 @@ class ConduitRepositoryImpl : ConduitRepository {
 
     override fun getArticles(
         limit: Int,
-        offset: Int,
+        offset: Long,
         authorUserId: Int?,
         taggedWithTagIds: List<Int>?,
         includingIds: List<Int>?
@@ -215,15 +219,14 @@ class ConduitRepositoryImpl : ConduitRepository {
     }[Comments.id].value
 
     override fun getArticleComments(articleId: Int): List<Comment> =
-        Comments.select { Comments.articleId eq articleId }.map { it.toComment() }
+        Comments.selectAll().where { Comments.articleId eq articleId }.map { it.toComment() }
 
     override fun deleteArticleComment(commentId: Int) {
         Comments.deleteWhere { Comments.id eq commentId }
     }
 
     override fun getAllTags(): List<ArticleTag> = Tags
-        .slice(Tags.tag)
-        .selectAll()
+        .select(Tags.tag)
         .withDistinct()
         .map { ArticleTag(it[Tags.tag]) }
 }

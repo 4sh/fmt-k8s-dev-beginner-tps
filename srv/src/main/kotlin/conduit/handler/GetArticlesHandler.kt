@@ -13,7 +13,7 @@ import org.http4k.core.Status
 interface GetArticlesHandler {
     operator fun invoke(
         tokenInfo: TokenAuth.TokenInfo?,
-        offset: Int,
+        offset: Long,
         limit: Int,
         tag: ArticleTag?,
         author: Username?,
@@ -24,7 +24,7 @@ interface GetArticlesHandler {
 class GetArticlesHandlerImpl(val txManager: ConduitTxManager) : GetArticlesHandler {
     override fun invoke(
         tokenInfo: TokenAuth.TokenInfo?,
-        offset: Int,
+        offset: Long,
         limit: Int,
         tag: ArticleTag?,
         author: Username?,
