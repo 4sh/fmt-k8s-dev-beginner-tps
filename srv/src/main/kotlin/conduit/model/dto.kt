@@ -11,7 +11,7 @@ data class ArticleDto(
     val createdAt: DateTime,
     val updatedAt: DateTime,
     val favorited: Boolean,
-    val favoritesCount: Int,
+    val favoritesCount: Long,
     val author: Profile
 )
 

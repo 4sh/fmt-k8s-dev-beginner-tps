@@ -18,7 +18,7 @@ class App : Closeable {
     val config: AppConfig = AppConfig(
         "log4j2.yaml",
         DbConfig(
-            "jdbc:h2:mem:conduittestdb;DB_CLOSE_DELAY=-1",
+            "jdbc:h2:mem:conduittestdb;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE",
             "org.h2.Driver"
         ),
         CorsPolicy.UnsafeGlobalPermissive,
@@ -35,15 +35,15 @@ class App : Closeable {
         val command = "SET REFERENTIAL_INTEGRITY FALSE;" +
                 getAllTables().joinToString("") { "TRUNCATE TABLE $it;" } +
                 "SET REFERENTIAL_INTEGRITY TRUE;"
-        val statement = db.connector().createStatement()
+        val statement = db.connector().prepareStatement(command, false)
 
-        statement.execute(command)
+        statement.executeUpdate()
         db.connector().commit()
     }
 
     private fun getAllTables(): MutableList<String> {
-        val statement = db.connector().createStatement()
-        val sqlResult = statement.executeQuery("SHOW TABLES")
+        val statement = db.connector().prepareStatement("SHOW TABLES", false)
+        val sqlResult = statement.executeQuery()
         val result = mutableListOf<String>()
 
         while (sqlResult.next()) {
@@ -63,7 +63,7 @@ object IntegrationTest : ProjectListener {
     private val lazyApp = lazy { App() }
     val app: App by lazyApp
 
-    override fun afterProject() {
+    override suspend fun afterProject() {
         if (lazyApp.isInitialized()) {
             app.close()
         }

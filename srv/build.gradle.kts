@@ -1,16 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 
-val kotlinVersion = "1.3.50"
-val http4kVersion = "3.196.0"
+val kotlinVersion = "2.0.20"
+val http4kVersion = "5.29.0.0"
 val log4jVersion = "2.12.1"
 val jacksonVersion = "2.10.0"
-val autoKonfigVersion = "1.0.0"
+val autoKonfigVersion = "1.1.0"
 val jaxbVersion = "2.3.0"
-val kotestVersion = "4.0.5"
+val kotestVersion = "5.9.1"
+val exposedVersion  = "0.53.0"
 
 plugins {
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "2.0.20"
     jacoco
     id("com.github.ben-manes.versions") version "0.26.0"
     id("com.adarshr.test-logger") version "2.0.0"
@@ -39,7 +40,14 @@ dependencies {
     implementation("org.http4k:http4k-server-jetty:$http4kVersion")
     implementation("org.http4k:http4k-format-jackson:$http4kVersion")
     implementation("org.http4k:http4k-client-apache:$http4kVersion")
-    implementation("org.jetbrains.exposed:exposed:0.13.6")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jodatime:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-money:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     implementation("com.h2database:h2:1.4.198")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
@@ -66,7 +74,7 @@ tasks.jacocoTestReport {
 }
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
+compileKotlin.kotlinOptions.jvmTarget = "17"
 
 val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions.jvmTarget = "1.8"
+compileTestKotlin.kotlinOptions.jvmTarget = "17"

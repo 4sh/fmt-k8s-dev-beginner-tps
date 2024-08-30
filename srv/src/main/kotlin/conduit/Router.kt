@@ -146,7 +146,7 @@ class Router(
     }
 
     private val limitLens = Query.int().defaulted("limit", 20)
-    private val offsetLens = Query.int().defaulted("offset", 0)
+    private val offsetLens = Query.long().defaulted("offset", 0)
     private val multipleArticlesResponseLens = Body.auto<MultipleArticlesResponse>().toLens()
 
     private fun getArticlesFeed() = { req: Request ->
@@ -291,7 +291,7 @@ data class UpdateUserRequest(val user: UpdateUser)
 
 data class ProfileResponse(val profile: Profile)
 
-data class MultipleArticlesResponse(val articles: List<ArticleDto>, val articlesCount: Int)
+data class MultipleArticlesResponse(val articles: List<ArticleDto>, val articlesCount: Long)
 
 data class TagsResponse(val tags: List<ArticleTag>)
 

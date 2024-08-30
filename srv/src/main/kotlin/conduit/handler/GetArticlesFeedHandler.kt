@@ -9,13 +9,13 @@ import conduit.util.extractEmail
 import org.http4k.core.Status
 
 interface GetArticlesFeedHandler {
-    operator fun invoke(tokenInfo: TokenAuth.TokenInfo, offset: Int, limit: Int): MultipleArticles
+    operator fun invoke(tokenInfo: TokenAuth.TokenInfo, offset: Long, limit: Int): MultipleArticles
 }
 
 // TODO: Write integration tests for articles feed
 class GetArticlesFeedHandlerImpl(val txManager: ConduitTxManager) :
     GetArticlesFeedHandler {
-    override fun invoke(tokenInfo: TokenAuth.TokenInfo, offset: Int, limit: Int) =
+    override fun invoke(tokenInfo: TokenAuth.TokenInfo, offset: Long, limit: Int) =
         txManager.tx {
             val email = tokenInfo.extractEmail()
             val user =
@@ -54,4 +54,4 @@ class GetArticlesFeedHandlerImpl(val txManager: ConduitTxManager) :
         }
 }
 
-data class MultipleArticles(val articles: List<ArticleDto>, val articlesCount: Int)
+data class MultipleArticles(val articles: List<ArticleDto>, val articlesCount: Long)

@@ -8,6 +8,7 @@ import org.http4k.core.*
 import org.http4k.lens.Header
 import org.http4k.lens.RequestContextKey
 import org.slf4j.LoggerFactory
+import java.util.*
 
 open class HttpException(val status: Status, message: String = status.description) : RuntimeException(message)
 data class GenericErrorModelBody(val body: List<String>)
@@ -68,7 +69,7 @@ class TokenAuth(private val jwt: JWT, contexts: RequestContexts) {
         .optional("Authorization")
 
     private fun extractTokenFromHeader(headerValue: String): TokenInfo {
-        if (headerValue.substring(0..5).toLowerCase() != "token ") throw Exception()
+        if (headerValue.substring(0..5).lowercase(Locale.getDefault()) != "token ") throw Exception()
         val token = Token(headerValue.substring(6))
         return TokenInfo(token, jwt.parse(token))
     }
