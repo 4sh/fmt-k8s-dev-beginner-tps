@@ -1,9 +1,9 @@
 package conduit.repository
 
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.jodatime.datetime
+import org.jetbrains.exposed.sql.transactions.transaction
 
 object Users : IntIdTable("users") {
     val email = varchar("email", 254).uniqueIndex()
