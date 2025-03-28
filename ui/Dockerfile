@@ -17,4 +17,6 @@ RUN npm run build
 
 FROM nginx:1.17.9 AS prod
 
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 COPY --from=build /code/dist/angular-conduit /usr/share/nginx/html
